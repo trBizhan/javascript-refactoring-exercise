@@ -1,52 +1,51 @@
-var txr = [];
+function processTransactions(transactions) {
+  if (!transactions) {
+    throw new Error("Undefined collection of transactions");
+  }
 
-function processTransactions(transActions) {
-
-    txr = [];
-
-    if(!validateTransactions(transActions)) {
-        throw new Error("Undefined collection of transactions")
-    }
-
-    let txCount = {}
-
-    const numberOfTransactions = transActions.length;
-
-    for(var i = 0; i < numberOfTransactions; i++) {
-        const transaction = transActions[i];
-        txCount[transaction] ? txCount[transaction] += 1 : txCount[transaction] = 1;
-    }
-
-    txCount = sortByAmountThenName(txCount);
-    
-    // Place them back in array for returning
-    Object.keys(txCount).forEach(function (key, index) {
-        txr[index] = `${key} ${txCount[key]}`;
-    });
-
-    return txr;
+  const orderedObj = createOrderedObjFromArray(transactions);
+  const orderedArray = createOrderedArrayFromObj(orderedObj);
+  const orderedResult = joinInnerArray(orderedArray);
+  return orderedResult;
 }
 
-function sortByAmountThenName(txCount) {
-    let sortedKeys = Object.keys(txCount).sort(function sortingFunction(itemOne, itemTwo) {
-        return  txCount[itemTwo] - txCount[itemOne] || itemOne > itemTwo || -(itemOne < itemTwo)}
-    );
+function createOrderedObjFromArray(transactions) {
+  // create an object from array. key of object = array element
+  // value of object = number of duplicate strings in array
+  // return object is ordered based on object key
+  let trCount = {};
+  transactions.forEach((i) => (trCount[i] = (trCount[i] || 0) + 1));
 
-    let sortedResults = {};
-    for(let objectKey of sortedKeys) {
-        sortedResults[objectKey] = txCount[objectKey];
-    }
+  const orderedObj = Object.keys(trCount)
+    .sort()
+    .reduce((obj, key) => {
+      obj[key] = trCount[key];
+      return obj;
+    }, {});
 
-    return sortedResults;
+  return orderedObj;
 }
 
+function createOrderedArrayFromObj(orderedObj) {
+  // create an array from the ordered object
+  // reorder the array based on count value
+  // return result is ordered elements, precedence
+  // count first then string
+  let sortedArray = [];
+  for (let key in orderedObj) {
+    sortedArray.push([key, orderedObj[key]]);
+  }
 
-function validateTransactions(transactions) {
-    if(transactions === undefined) {
-        return false;
-    } 
+  sortedArray.sort((a, b) => b[1] - a[1]);
 
-    return true;
+  return sortedArray;
+}
+
+// argument is an array of arrays,
+// output is an array of strings.
+// the string is stringified inner array
+function joinInnerArray(sortable) {
+  return sortable.map((i) => i.join(" "));
 }
 
 module.exports = processTransactions;
