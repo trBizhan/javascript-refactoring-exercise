@@ -1,4 +1,16 @@
+/*************************************************************
+ *   The original code seemed untidy and used superfulous variables
+ *   and function. eg: validateTransactions, transActions, etc
+ *   subsequently replaced it with the following version.
+ *************************************************************/
 function processTransactions(transactions) {
+  /*************************************************************
+   *  input: an array of strings representing transactions
+   *  output: an array of strings containing  transaction name
+   *  and count of transcations. The precedence is based on count
+   *  followed by the alphabetical order of transaction names.
+   *
+   *************************************************************/
   if (!transactions) {
     throw new Error("Undefined collection of transactions");
   }
